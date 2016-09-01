@@ -29,6 +29,7 @@
 from ctypes import *
 import usb.util
 import sys
+import platform
 import logging
 from usb._debug import methodtrace
 import usb._interop as _interop
@@ -276,6 +277,12 @@ def _load_library(find_library=None):
     # On FreeBSD 8/9, libusb 1.0 and libusb 0.1 are in the same shared
     # object libusb.so, so if we found libusb library name, we must assure
     # it is 1.0 version. We just try to get some symbol from 1.0 version
+    if platform.machine() == 'mips':
+        try:
+            return CDLL('libusb-1.0.so')
+        except:
+            pass
+    
     if sys.platform == 'win32':
         win_cls = WinDLL
     else:
